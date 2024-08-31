@@ -8,16 +8,17 @@ esp32:
 
 
 #Wireless config system
+#Set up AP for management (only available to us)
 wifi: 
-    ap:
+    ap: #Access point
         ssid: SagraMezzano_1
         password: suinoaureo
 
     output_power: "8.5dB" #save some power
 
-logger: 
+logger: #Log to serial
 
-web_server:
+web_server: #HTML control page
     port: 80
     local: true
 
