@@ -1,0 +1,59 @@
+esphome:
+    name: tablelighting2000
+
+esp32:
+    board: nodemcu-32s
+
+# BLE tracker setup
+
+
+#Wireless config system
+wifi: 
+    ap:
+        ssid: SagraMezzano_1
+        password: suinoaureo
+
+    output_power: "8.5dB" #save some power
+
+logger: 
+
+web_server:
+    port: 80
+    local: true
+
+#External inputs
+binary_sensor:
+     #External on-off key. Has right of way over BLE
+     - platform: gpio
+       id: external_light_switch
+       pin: GPIO26
+       on_press: 
+         then:
+           - light.toggle: main_light
+#    - platform: ble_presence
+#      name: "Generic tracker"
+#      min_rssi: -30 dB
+#
+
+#Light components
+#Circular light of the table
+light:
+    - platform: rgb
+      id: main_light
+      name: "Tavolo sagra"
+      red: circle_red
+      green: circle_green
+      blue: circle_blue
+
+#Output
+output:
+    #PWM outputs
+    - platform: ledc
+      id: circle_red
+      pin: GPIO32
+    - platform: ledc
+      id: circle_green
+      pin: GPIO33
+    - platform: ledc
+      id: circle_blue
+      pin: GPIO25
