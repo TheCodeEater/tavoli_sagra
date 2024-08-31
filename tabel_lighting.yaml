@@ -28,6 +28,7 @@ binary_sensor:
      - platform: gpio
        id: external_light_switch
        pin: GPIO26
+       inverted: true
        on_press: 
          then:
            - light.toggle: main_light
