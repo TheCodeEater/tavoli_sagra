@@ -27,8 +27,9 @@ binary_sensor:
      #External on-off key. Has right of way over BLE
      - platform: gpio
        id: external_light_switch
-       pin: GPIO26
-       inverted: true
+       pin: 
+         number: GPIO26
+         inverted: true
        on_press: 
          then:
            - light.toggle: main_light
