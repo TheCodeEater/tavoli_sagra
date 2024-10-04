@@ -1,4 +1,8 @@
 #include "esphome.h"
+#include <BLEScan.h>
+#include <BLEDevice.h>
+#include <BLEUtils.h>
+#include <BLEAdvertisedDevice.h>
 
 namespace jcc{ //jack custom components namespace
 /**
