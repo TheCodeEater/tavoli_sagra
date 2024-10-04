@@ -1,11 +1,19 @@
 esphome:
     name: tablelighting2000
+    includes:
+      - components/ble_scanner
 
 esp32:
     board: nodemcu-32s
 
-# BLE tracker setup
+# Custom component
+#Leggerete sulla wiki che sono deprecati. 
+#Francamente me ne infischio
 
+custom_component:
+  - lambda: |-
+      auto ble_scanner= new bleScanner();
+      return {ble_scanner};
 
 #Wireless config system
 #Set up AP for management (only available to us)
