@@ -43,7 +43,7 @@ binary_sensor:
 light:
     - platform: rgb
       id: main_light
-      name: "Tavolo sagra"
+      name: "Striscia RGB"
       red: circle_red
       green: circle_green
       blue: circle_blue
@@ -60,3 +60,5 @@ output:
     - platform: ledc
       id: circle_blue
       pin: GPIO25
+
+# Other lights shall be defined here
