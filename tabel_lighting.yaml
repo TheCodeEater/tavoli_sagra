@@ -18,6 +18,10 @@ custom_component:
 
 # Ble tracker
 esp32_ble_tracker:
+  on_scan_end: 
+    then: #erase all devices
+      - lambda: |-
+          
 
 text_sensor:
   - platform: ble_scanner

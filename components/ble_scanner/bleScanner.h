@@ -49,10 +49,16 @@ namespace jcc{ //jack custom components namespace
          * Add device with mac and rssi
          */
         void setDevice(std::string mac, int8_t rssi, uint16_t time){
-            m_nearby_devices[mac]=rssi; //match devices and rssi
+            /*m_nearby_devices[mac]=rssi; //match devices and rssi
             m_nearby_devices_lastonline[mac]=time; //match device and last update
-            m_last_timestamp=time; //save last timestamp
+            m_last_timestamp=time; //save last timestamp*/
             //ESP_LOGD("set device",mac.c_str());
+        }
+        /**
+         * Empty device list
+         */
+        void clearDevices(){
+
         }
         /**
          * Check if there are devices with rssi greater than the thd
@@ -72,7 +78,7 @@ namespace jcc{ //jack custom components namespace
            //for(auto const& device: m_nearby_devices){
             //ESP_LOGD("RSSI","%d",(int)device.second);
            //}
-            auto max=std::max_element(m_nearby_devices.begin(),m_nearby_devices.end(),[](pair_type const& a, pair_type const& b){
+            /*auto max=std::max_element(m_nearby_devices.begin(),m_nearby_devices.end(),[](pair_type const& a, pair_type const& b){
                 return a.second<b.second; //compare map hold values
             });
             /*std::for_each(m_nearby_devices_lastonline.begin(),m_nearby_devices_lastonline.end(),[this](pair_type const& device){
@@ -81,9 +87,10 @@ namespace jcc{ //jack custom components namespace
                     m_nearby_devices.erase(device.first);
                     m_nearby_devices_lastonline.erase(device.first);
                 }
-            });*/
+            });
 
-            return max->second>threshold;
+            return max->second>threshold;*/
+            return true;
         }
 
         private:
