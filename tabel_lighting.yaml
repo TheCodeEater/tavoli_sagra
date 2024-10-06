@@ -69,6 +69,11 @@ binary_sensor:
      - platform: template
        id: nearby_devices
        name: "nearby devices"
+       on_state:
+          - light.control:
+              id: main_light
+              state: !lambda return x;
+
 
 #Light components
 #Circular light of the table
