@@ -53,6 +53,12 @@ binary_sensor:
          then:
            - light.toggle: main_light
 
+     - platform: template
+       name: "nearby devices"
+       lambda: |-
+        jcc::bleScanner* scanner{static_cast<jcc::bleScanner*>(id(ble))};
+        return scanner->checkNearbyDevices(-60);
+
 #Light components
 #Circular light of the table
 light:
