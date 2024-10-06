@@ -2,6 +2,8 @@ esphome:
     name: tablelighting2000
     includes:
       - components/ble_scanner/bleScanner.h
+    libraries:
+      - ArduinoJSON
 
 esp32:
     board: nodemcu-32s
@@ -28,18 +30,18 @@ text_sensor:
 
 #Wireless config system
 #Set up AP for management (only available to us)
-wifi: 
-    ap: #Access point
-        ssid: SagraMezzano_1
-        password: suinoaureo
+#wifi: 
+#    ap: #Access point
+ #       ssid: SagraMezzano_1
+ #       password: suinoaureo
 
-    output_power: "8.5dB" #save some power
+ #   output_power: "8.5dB" #save some power
 
 logger: #Log to serial
 
-web_server: #HTML control page
-    port: 80
-    local: true
+#web_server: #HTML control page
+#    port: 80
+#    local: true
 
 #External inputs
 binary_sensor:
