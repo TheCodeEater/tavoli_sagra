@@ -64,9 +64,10 @@ namespace jcc{ //jack custom components namespace
            //for(auto const& device: m_nearby_devices){
             //ESP_LOGD("RSSI","%d",(int)device.second);
            //}
-            auto max=std::max_element(m_nearby_devices.begin(),m_nearby_devices.end(),[](pair_type a, pair_type b){
+            auto max=std::max_element(m_nearby_devices.begin(),m_nearby_devices.end(),[](pair_type const& a, pair_type const& b){
                 return a.second<b.second; //compare map hold values
             });
+            //std::for_each(m_nearby_devices_lastonline.begin(),m_nearby_devices_lastonline.end(),[](pair_type const& ))
 
             return max->second>threshold;
         }
