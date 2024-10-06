@@ -7,6 +7,13 @@
 #include <algorithm>
 
 namespace jcc{ //jack custom components namespace
+    /**
+     * Represents a ble device
+     */
+    class bleDevice{
+        int8_t rssi{};
+        uint16_t timestamp{};
+    };
 /**
  * Class to represent a BLE device scanner. Detects nearby ble devices and allows to perform some operations.
  * Designed to read RSSI.
@@ -68,13 +75,13 @@ namespace jcc{ //jack custom components namespace
             auto max=std::max_element(m_nearby_devices.begin(),m_nearby_devices.end(),[](pair_type const& a, pair_type const& b){
                 return a.second<b.second; //compare map hold values
             });
-            std::for_each(m_nearby_devices_lastonline.begin(),m_nearby_devices_lastonline.end(),[this](pair_type const& device){
+            /*std::for_each(m_nearby_devices_lastonline.begin(),m_nearby_devices_lastonline.end(),[this](pair_type const& device){
                 //check last update timestamp
                 if(abs(device.second-m_last_timestamp)>10){//if a device has not been updated for 10+ seconds
                     m_nearby_devices.erase(device.first);
                     m_nearby_devices_lastonline.erase(device.first);
                 }
-            });
+            });*/
 
             return max->second>threshold;
         }
