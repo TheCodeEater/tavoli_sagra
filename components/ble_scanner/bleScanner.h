@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <ArduinoJson.h>
+#include <algorithm>
 
 namespace jcc{ //jack custom components namespace
 /**
@@ -11,6 +12,8 @@ namespace jcc{ //jack custom components namespace
  * Designed to read RSSI.
  */
     class bleScanner: public esphome::Component{
+        using map_device=std::map<std::string,int8_t>;
+        using pair_type=map_device::value_type;
         public:
         /**
          * Create empty device association
@@ -19,34 +22,59 @@ namespace jcc{ //jack custom components namespace
 
             }
 
+        /**
+         * Wrapper around process devices which 
+         */
         void processDevice(std::string& dev){
-            StaticJsonDocument<128> doc{};
+            StaticJsonDocument<96> doc{};
             deserializeJson(doc,dev);
-            std::string mac{doc["mac"]};
-            setDevice(mac,doc["rssi"]);
-        }
+            const char* mac{doc["address"]};
 
-        void setDevice(std::string& mac, int8_t rssi){
+            //check validity
+            if(mac==nullptr){
+                ESP_LOGE("Ble scanner","Cannot get mac address of given device!");
+            }else{
+                setDevice(std::string(mac),doc["rssi"],doc["timestamp"]);
+            }
+            
+        }
+        /**
+         * Add device with mac and rssi
+         */
+        void setDevice(std::string mac, int8_t rssi, uint16_t time){
             m_nearby_devices[mac]=rssi; //match devices and rssi
+            m_nearby_devices_lastonline[mac]=time;
+            //ESP_LOGD("set device",mac.c_str());
         }
-
+        /**
+         * Check if there are devices with rssi greater than the thd
+         */
         bool checkNearbyDevices(int8_t threshold){
-            bool found_nearby=false;
-            for(auto const& device : m_nearby_devices){//iterate over each detected device
-                if(device.second>threshold){ //if the rssi is greater than the minimu, then turn on lights
+            /*for(auto const& device : m_nearby_devices){//iterate over each detected device
+                if(device.second>threshold /*&& device.first=="4C:D0:19:38:D7:F7"){ //if the rssi is greater than the minimu, then turn on lights
                     found_nearby=true; //flag as found, do not halt the loop. see below
+                    //ESP_LOGD("Nearby","yes");
                 }
                 //remove devices with low rssi that are likely to be unreachable soon. this
                 //mitigates ram overflow
-                if(device.second<-70){
-                    m_nearby_devices.erase(device.first);
-                }
-            }
-            return found_nearby; //report
+                //if(device.second<-70){
+                //    m_nearby_devices.erase(device.first);
+                //}
+            }*/
+           //for(auto const& device: m_nearby_devices){
+            //ESP_LOGD("RSSI","%d",(int)device.second);
+           //}
+            auto max=std::max_element(m_nearby_devices.begin(),m_nearby_devices.end(),[](pair_type a, pair_type b){
+                return a.second<b.second; //compare map hold values
+            });
+
+            return max->second>threshold;
         }
 
         private:
-            std::map<std::string,int8_t> m_nearby_devices; /// Map MAC to rssi of nearby devices
+             map_device m_nearby_devices; /// Map MAC to rssi of nearby devices
+             map_device m_nearby_devices_lastonline; /// Map MAC to last detected state
+            
 
     };
 }
