@@ -63,11 +63,8 @@ namespace jcc{ //jack custom components namespace
             auto max_pos=std::max_element(m_devices.begin(),m_devices.end(),[](RSSI a, RSSI b){
                 return a<b;
             });
-            if(m_scanComplete){
-                return *max_pos>threshold;
-            }else{
-                return true;
-            }
+
+            return *max_pos>threshold;
             
         }
 

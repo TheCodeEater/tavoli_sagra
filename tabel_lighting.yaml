@@ -18,9 +18,16 @@ custom_component:
 
 # Ble tracker
 esp32_ble_tracker:
+  scan_parameters:
+    duration: 5 s
   on_scan_end: 
-    then: #erase all devices
+    then: #process rssi data and purge device
       - lambda: |-
+          ESP_LOGI("Scan","Scan complete");
+          auto scan=static_cast<jcc::bleScanner*>(id(ble));
+          bool found_nearby=scan->checkNearbyDevices(-60); //check scan result
+          id(nearby_devices)->publish_state(found_nearby); //update nearby devices sensor
+          scan->clearDevices(); //clear devices, ready for next scan
           
 
 text_sensor:
@@ -60,10 +67,8 @@ binary_sensor:
            - light.toggle: main_light
 
      - platform: template
+       id: nearby_devices
        name: "nearby devices"
-       lambda: |-
-        jcc::bleScanner* scanner{static_cast<jcc::bleScanner*>(id(ble))};
-        return scanner->checkNearbyDevices(-60);
 
 #Light components
 #Circular light of the table
