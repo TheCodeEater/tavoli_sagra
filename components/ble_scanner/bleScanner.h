@@ -18,7 +18,7 @@ namespace jcc{ //jack custom components namespace
         /**
          * Create empty device association
          */
-            bleScanner(): m_nearby_devices{}{
+            bleScanner(): m_nearby_devices{}, m_nearby_devices_lastonline{}, m_last_timestamp{}{
 
             }
 
@@ -43,7 +43,8 @@ namespace jcc{ //jack custom components namespace
          */
         void setDevice(std::string mac, int8_t rssi, uint16_t time){
             m_nearby_devices[mac]=rssi; //match devices and rssi
-            m_nearby_devices_lastonline[mac]=time;
+            m_nearby_devices_lastonline[mac]=time; //match device and last update
+            m_last_timestamp=time; //save last timestamp
             //ESP_LOGD("set device",mac.c_str());
         }
         /**
@@ -67,7 +68,13 @@ namespace jcc{ //jack custom components namespace
             auto max=std::max_element(m_nearby_devices.begin(),m_nearby_devices.end(),[](pair_type const& a, pair_type const& b){
                 return a.second<b.second; //compare map hold values
             });
-            //std::for_each(m_nearby_devices_lastonline.begin(),m_nearby_devices_lastonline.end(),[](pair_type const& ))
+            std::for_each(m_nearby_devices_lastonline.begin(),m_nearby_devices_lastonline.end(),[this](pair_type const& device){
+                //check last update timestamp
+                if(abs(device.second-m_last_timestamp)>10){//if a device has not been updated for 10+ seconds
+                    m_nearby_devices.erase(device.first);
+                    m_nearby_devices_lastonline.erase(device.first);
+                }
+            });
 
             return max->second>threshold;
         }
@@ -75,6 +82,7 @@ namespace jcc{ //jack custom components namespace
         private:
              map_device m_nearby_devices; /// Map MAC to rssi of nearby devices
              map_device m_nearby_devices_lastonline; /// Map MAC to last detected state
+             uint16_t m_last_timestamp;
             
 
     };
