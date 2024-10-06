@@ -17,19 +17,6 @@ custom_component:
 # Ble tracker
 esp32_ble_tracker:
 
-# All the non binary sensors
-sensor:
-  - platform: ble_rssi
-  # Detect all BLe devices with the 0x1800 service (i.e the generic access. every commercia ble device has this)
-  # if it does not work, try with 0x180f (battery service)
-    service_uuid: "180A" 
-    #mac_address: 56:9a:e7:66:d8:be
-    id: rssi_sensor
-    name: "HumanDetector"
-
-    #on_value: #when receiving an rssi value
-      #then:
-
 text_sensor:
   - platform: ble_scanner
     name: "BLE Devices Scanner"
