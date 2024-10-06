@@ -29,8 +29,8 @@ namespace jcc{ //jack custom components namespace
         /**
          * Create empty device association
          */
-            bleScanner(): m_devices{}, m_last_timestamp{0},m_scanComplete{false} {
-                m_devices.reserve(max_devices); //allocate initial memory
+            bleScanner(): max_rssi{-2000} { //set to low value so that no device will ever have a lesser rssi
+                
             }
 
         /**
@@ -42,10 +42,13 @@ namespace jcc{ //jack custom components namespace
             setDevice(doc["rssi"]); //save rssi value
         }
         /**
-         * Add device rssi
+         * Add a new device RSSI.
+         * If has a maximum value greater than the current one, it becomes the new nearbiest device.
          */
         void setDevice(RSSI value){
-            m_devices.push_back(value);
+            if(value>max_rssi){
+                max_rssi=value;
+            }
         }
         /**
          * Empty device list
@@ -53,27 +56,20 @@ namespace jcc{ //jack custom components namespace
         void clearDevices(){
             //set memory to 0. POD is essential to make this work
             //memset(m_devices,0,max_devices*sizeof(bleDevice));
-            m_devices.clear();
+            max_rssi=-200;
         }
         /**
          * Check if there are devices with rssi greater than the thd
          */
         bool checkNearbyDevices(int8_t threshold){
-
-            auto max_pos=std::max_element(m_devices.begin(),m_devices.end(),[](RSSI a, RSSI b){
-                return a<b;
-            });
-
-            return *max_pos>threshold;
+            return max_rssi>threshold;
             
         }
 
         private:
              //map_device m_nearby_devices; /// Map MAC to rssi of nearby devices
              //map_device m_nearby_devices_lastonline; /// Map MAC to last detected state
-             std::vector<RSSI> m_devices;
-             uint16_t m_last_timestamp;
-             bool m_scanComplete;
+             int16_t max_rssi{};
             
 
     };
