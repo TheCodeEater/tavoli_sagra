@@ -29,18 +29,17 @@ namespace jcc{ //jack custom components namespace
         /**
          * Create empty device association
          */
-            bleScanner(): m_devices{}, m_scanComplete{false} {
+            bleScanner(): m_devices{}, m_last_timestamp{0},m_scanComplete{false} {
                 m_devices.reserve(max_devices); //allocate initial memory
             }
 
         /**
-         * Wrapper around process devices which 
+         * Wrapper around set devices which interprets ble tracker output
          */
         void processDevice(std::string& dev){
-            StaticJsonDocument<96> doc{};
-            deserializeJson(doc,dev);
-            //save rssi value
-            setDevice(doc["rssi"]);
+            StaticJsonDocument<96> doc{}; //create json object
+            deserializeJson(doc,dev); //parse
+            setDevice(doc["rssi"]); //save rssi value
         }
         /**
          * Add device rssi
@@ -76,6 +75,7 @@ namespace jcc{ //jack custom components namespace
              //map_device m_nearby_devices; /// Map MAC to rssi of nearby devices
              //map_device m_nearby_devices_lastonline; /// Map MAC to last detected state
              std::vector<RSSI> m_devices;
+             uint16_t m_last_timestamp;
              bool m_scanComplete;
             
 
