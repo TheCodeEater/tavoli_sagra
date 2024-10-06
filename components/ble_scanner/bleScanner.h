@@ -3,6 +3,7 @@
 #include "esphome.h"
 #include <string>
 #include <map>
+#include <ArduinoJson.h>
 
 namespace jcc{ //jack custom components namespace
 /**
@@ -17,6 +18,13 @@ namespace jcc{ //jack custom components namespace
             bleScanner(): m_nearby_devices{}{
 
             }
+
+        void processDevice(std::string& dev){
+            StaticJsonDocument<128> doc{};
+            deserializeJson(doc,dev);
+            std::string mac{doc["mac"]};
+            setDevice(mac,doc["rssi"]);
+        }
 
         void setDevice(std::string& mac, int8_t rssi){
             m_nearby_devices[mac]=rssi; //match devices and rssi
