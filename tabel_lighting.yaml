@@ -1,9 +1,18 @@
 esphome:
     name: tablelighting2000
-
+    includes:
+      - components/ble_scanner/bleScanner.h
 
 esp32:
     board: nodemcu-32s
+
+custom_component:
+  - lambda: |-
+      auto ble = new jcc::bleScanner();
+      return {ble};
+
+    components: 
+      - id: ble
 
 # Ble tracker
 esp32_ble_tracker:
@@ -26,8 +35,7 @@ text_sensor:
     name: "BLE Devices Scanner"
     on_value:
       lambda: |-
-        JsonDocument doc{};
-        deserializeJson(doc,x);
+        static_cast<jcc::bleScanner*>(id(ble))->processDevice(x);
         
 
 
@@ -57,10 +65,6 @@ binary_sensor:
        on_press: 
          then:
            - light.toggle: main_light
-#    - platform: ble_presence
-#      name: "Generic tracker"
-#      min_rssi: -30 dB
-#
 
 #Light components
 #Circular light of the table
