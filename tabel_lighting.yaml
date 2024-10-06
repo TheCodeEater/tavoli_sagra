@@ -43,10 +43,10 @@ text_sensor:
 #Set up AP for management (only available to us)
 #wifi: 
 #    ap: #Access point
- #       ssid: SagraMezzano_1
- #       password: suinoaureo
+#        ssid: SagraMezzano_1
+#        password: suinoaureo
 
- #   output_power: "8.5dB" #save some power
+#    output_power: "8.5dB" #save some power
 
 logger: #Log to serial
 
