@@ -9,6 +9,7 @@
 namespace jcc{ //jack custom components namespace
     /**
      * Represents a ble device
+     * Note: is and must stay POD
      */
     class bleDevice{
         int8_t rssi{};
@@ -21,6 +22,8 @@ namespace jcc{ //jack custom components namespace
     class bleScanner: public esphome::Component{
         using map_device=std::map<std::string,int8_t>;
         using pair_type=map_device::value_type;
+        static const uint8_t max_devices=128;
+
         public:
         /**
          * Create empty device association
@@ -55,7 +58,8 @@ namespace jcc{ //jack custom components namespace
          * Empty device list
          */
         void clearDevices(){
-
+            //set memory to 0. POD is essential to make this work
+            memset(m_devices,0,max_devices*sizeof(bleDevice));
         }
         /**
          * Check if there are devices with rssi greater than the thd
@@ -68,7 +72,7 @@ namespace jcc{ //jack custom components namespace
         private:
              //map_device m_nearby_devices; /// Map MAC to rssi of nearby devices
              //map_device m_nearby_devices_lastonline; /// Map MAC to last detected state
-             bleDevice m_devices[128];
+             bleDevice m_devices[max_devices];
              bool m_scanComplete;
             
 
