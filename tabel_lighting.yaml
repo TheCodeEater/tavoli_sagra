@@ -1,26 +1,58 @@
 esphome:
     name: tablelighting2000
+    includes:
+      - components/ble_scanner/bleScanner.h
+    libraries:
+      - ArduinoJSON
 
 esp32:
     board: nodemcu-32s
 
-# BLE tracker setup
+custom_component:
+  - lambda: |-
+      auto ble = new jcc::bleScanner();
+      return {ble};
+
+    components: 
+      - id: ble
+
+# Ble tracker
+esp32_ble_tracker:
+  scan_parameters:
+    duration: 5 s
+  on_scan_end: 
+    then: #process rssi data and purge device
+      - lambda: |-
+          ESP_LOGI("Scan","Scan complete");
+          auto scan=static_cast<jcc::bleScanner*>(id(ble));
+          bool found_nearby=scan->checkNearbyDevices(-60); //check scan result
+          id(nearby_devices)->publish_state(found_nearby); //update nearby devices sensor
+          scan->clearDevices(); //clear devices, ready for next scan
+          
+
+text_sensor:
+  - platform: ble_scanner
+    name: "BLE Devices Scanner"
+    on_value:
+      lambda: |-
+        static_cast<jcc::bleScanner*>(id(ble))->processDevice(x);
+        
 
 
 #Wireless config system
 #Set up AP for management (only available to us)
-wifi: 
-    ap: #Access point
-        ssid: SagraMezzano_1
-        password: suinoaureo
+#wifi: 
+#    ap: #Access point
+#        ssid: SagraMezzano_1
+#        password: suinoaureo
 
-    output_power: "8.5dB" #save some power
+#    output_power: "8.5dB" #save some power
 
 logger: #Log to serial
 
-web_server: #HTML control page
-    port: 80
-    local: true
+#web_server: #HTML control page
+#    port: 80
+#    local: true
 
 #External inputs
 binary_sensor:
@@ -33,10 +65,15 @@ binary_sensor:
        on_press: 
          then:
            - light.toggle: main_light
-#    - platform: ble_presence
-#      name: "Generic tracker"
-#      min_rssi: -30 dB
-#
+
+     - platform: template
+       id: nearby_devices
+       name: "nearby devices"
+       on_state:
+          - light.control:
+              id: main_light
+              state: !lambda return x;
+
 
 #Light components
 #Circular light of the table
