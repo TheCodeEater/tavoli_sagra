@@ -1,5 +1,5 @@
 esphome:
-    name: tablelighting2000
+    name: bob3
     includes:
       - components/ble_scanner/bleScanner.h
     libraries:
@@ -41,14 +41,18 @@ text_sensor:
 
 #Wireless config system
 #Set up AP for management (only available to us)
-#wifi: 
-#    ap: #Access point
-#        ssid: SagraMezzano_1
-#        password: suinoaureo
+wifi: 
+    ap: #Access point
+        ssid: SagraMezzano_3
+        password: i_cinesi_sono_tutti_uguali
 
-#    output_power: "8.5dB" #save some power
+    output_power: "8.5dB" #save some power
 
 logger: #Log to serial
+
+ota:
+  - platform: esphome
+    password: "sei_bera_o_bando"
 
 #web_server: #HTML control page
 #    port: 80
@@ -71,7 +75,7 @@ binary_sensor:
        name: "nearby devices"
        on_state:
           - light.control:
-              id: main_light
+              id: test_light
               state: !lambda return x;
 
 
@@ -84,6 +88,11 @@ light:
       red: circle_red
       green: circle_green
       blue: circle_blue
+    - platform: binary
+      id: test_light
+      output: internal_led
+
+
 
 #Output
 output:
@@ -97,5 +106,8 @@ output:
     - platform: ledc
       id: circle_blue
       pin: GPIO25
+    - platform: gpio
+      pin: GPIO2
+      id: internal_led
 
 # Other lights shall be defined here
