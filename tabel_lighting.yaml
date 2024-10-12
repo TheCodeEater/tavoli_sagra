@@ -1,5 +1,5 @@
 esphome:
-    name: bob3
+    name: bob
     includes:
       - components/ble_scanner/bleScanner.h
     libraries:
@@ -75,22 +75,23 @@ binary_sensor:
        name: "nearby devices"
        on_state:
           - light.control:
-              id: test_light
+              id: main_light
               state: !lambda return x;
 
 
 #Light components
 #Circular light of the table
 light:
-    - platform: rgb
+    - platform: monochromatic
       id: main_light
-      name: "Striscia RGB"
-      red: circle_red
-      green: circle_green
-      blue: circle_blue
-    - platform: binary
-      id: test_light
-      output: internal_led
+      name: "Striscia led"
+      output: main_output
+    #  red: circle_red
+    #  green: circle_green
+    #  blue: circle_blue
+    #- platform: binary
+    #  id: test_light
+    #  output: internal_led
 
 
 
@@ -98,16 +99,16 @@ light:
 output:
     #PWM outputs
     - platform: ledc
-      id: circle_red
+      id: main_output
       pin: GPIO32
-    - platform: ledc
-      id: circle_green
-      pin: GPIO33
-    - platform: ledc
-      id: circle_blue
-      pin: GPIO25
-    - platform: gpio
-      pin: GPIO2
-      id: internal_led
+    #- platform: ledc
+    #  id: circle_green
+    #  pin: GPIO33
+    #- platform: ledc
+    #  id: circle_blue
+    #  pin: GPIO25
+    #- platform: gpio
+    #  pin: GPIO2
+    #  id: internal_led
 
 # Other lights shall be defined here
