@@ -10,7 +10,7 @@ namespace jcc{ //jack custom components namespace
 /**
  * This class represent a discrete counter
  */
-class counter{
+class counter:public esphome::Component{
     using ctype=uint8_t;
     public:
         counter(ctype max): m_count{},m_overflow{max}{};
@@ -31,7 +31,7 @@ class counter{
     private:
         ctype m_count;
         ctype m_overflow;
-}
+};
 /**
  * Class to represent a BLE device scanner. Detects nearby ble devices and allows to perform some operations.
  * Designed to read RSSI.
