@@ -7,7 +7,31 @@
 #include <algorithm>
 
 namespace jcc{ //jack custom components namespace
+/**
+ * This class represent a discrete counter
+ */
+class counter{
+    using ctype=uint8_t;
+    public:
+        counter(ctype max): m_count{},m_overflow{max}{};
 
+        void increase(){ //+1 to the counter
+            m_count++;
+        }
+
+        void clear(){ //reset the counter
+            m_count=0;
+        }
+
+        bool isOverflow(){ //check if it has overflown
+            return m_count>=m_overflow;
+        }
+
+
+    private:
+        ctype m_count;
+        ctype m_overflow;
+}
 /**
  * Class to represent a BLE device scanner. Detects nearby ble devices and allows to perform some operations.
  * Designed to read RSSI.
