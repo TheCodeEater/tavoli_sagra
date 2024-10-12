@@ -77,7 +77,7 @@ binary_sensor:
          then:
             - if:
                 condition:
-                  lambda: "!return id(external_light_switch).state;"
+                  lambda: "return !id(external_light_switch).state;"
                 then:
                   - light.control:
                       id: main_light
