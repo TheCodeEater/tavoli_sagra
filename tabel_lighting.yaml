@@ -11,10 +11,12 @@ esp32:
 custom_component:
   - lambda: |-
       auto ble = new jcc::bleScanner();
-      return {ble};
+      auto counter = new jcc::counter(7);
+      return {ble,counter};
 
     components: 
       - id: ble
+      - id: ble_counter
 
 # Ble tracker
 esp32_ble_tracker:
