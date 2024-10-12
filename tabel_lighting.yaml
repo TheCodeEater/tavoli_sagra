@@ -66,14 +66,16 @@ binary_sensor:
        pin: 
          number: GPIO26
          inverted: true
-       on_press: 
+       on_state: #whenever receiving a new state, set it. Does not toggle
          then:
-           - light.toggle: main_light
+            - light.control:
+              id: main_light
+              state: !lambda return x;
 
      - platform: template
        id: nearby_devices
        name: "nearby devices"
-       on_state:
+       on_state: #whenever receiving a new state, set it. Does not toggle
           - light.control:
               id: main_light
               state: !lambda return x;
