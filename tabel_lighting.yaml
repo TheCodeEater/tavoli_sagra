@@ -51,7 +51,6 @@ wifi:
 logger: #Log to serial
 
 ota:
-  - platform: esphome
     password: "sei_bera_o_bando"
 
 #web_server: #HTML control page
@@ -67,8 +66,7 @@ binary_sensor:
          number: GPIO26
          inverted: true
        on_state: #whenever receiving a new state, set it. Does not toggle
-         then:
-            - light.control:
+          - light.control:
               id: main_light
               state: !lambda return x;
 
@@ -76,9 +74,15 @@ binary_sensor:
        id: nearby_devices
        name: "nearby devices"
        on_state: #whenever receiving a new state, set it. Does not toggle
-          - light.control:
-              id: main_light
-              state: !lambda return x;
+         then:
+            - if:
+                condition:
+                  lambda: "!return id(external_light_switch).state;"
+                then:
+                  - light.control:
+                      id: main_light
+                      state: !lambda return x;
+
 
 
 #Light components
