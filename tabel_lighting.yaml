@@ -11,7 +11,7 @@ esp32:
 custom_component:
   - lambda: |-
       auto ble = new jcc::bleScanner();
-      auto counter = new jcc::counter(7);
+      auto counter = new jcc::counter(6);
       return {ble,counter};
 
     components: 
@@ -29,19 +29,24 @@ esp32_ble_tracker:
           auto scan=static_cast<jcc::bleScanner*>(id(ble));
           auto counter=static_cast<jcc::counter*>(id(ble_counter));
           bool found_nearby=scan->checkNearbyDevices(-60); //check scan result
-          //if a device has been found
-          if(found_nearby){
-            counter->clear(); //reset no device found time counter
-            id(nearby_devices)->publish_state(true); //turn on the light
-          }else{//no devices found
-            //count this scan session as not found
-            counter->increase();
-            if(counter->isOverflow()){
-              //if the maximum device absence time has been reached, turn off and reset
-              id(nearby_devices)->publish_state(false); //update nearby devices sensor
-              counter->clear();
+          //if button is not pressed, bluetooth reigns
+          bool button_pressed=id(external_light_switch).state;
+          if(!button_pressed){
+            //if a device has been found
+            if(found_nearby){
+              counter->clear(); //reset no device found time counter
+              id(nearby_devices)->publish_state(true); //turn on the light
+            }else{//no devices found
+              //count this scan session as not found
+              counter->increase();
+              if(counter->isOverflow()){
+                //if the maximum device absence time has been reached, turn off and reset
+                id(nearby_devices)->publish_state(false); //update nearby devices sensor
+                counter->clear();
+              }
             }
           }
+          
           scan->clearDevices(); //clear devices, ready for next scan
           
 
@@ -66,6 +71,7 @@ wifi:
 logger: #Log to serial
 
 ota:
+  - platform: esphome
     password: "sei_bera_o_bando"
 
 #web_server: #HTML control page
@@ -80,23 +86,27 @@ binary_sensor:
        pin: 
          number: GPIO26
          inverted: true
+         mode:
+            input: true
+            pullup: true
        on_state: #whenever receiving a new state, set it. Does not toggle
-          - light.control:
-              id: main_light
-              state: !lambda return x;
+         then:
+            - if:
+                condition:
+                  lambda: "return !id(nearby_devices).state;"
+                then:
+                  - light.control:
+                      id: main_light
+                      state: !lambda return x;
 
      - platform: template
        id: nearby_devices
        name: "nearby devices"
        on_state: #whenever receiving a new state, set it. Does not toggle
          then:
-            - if:
-                condition:
-                  lambda: "return !id(external_light_switch).state;"
-                then:
-                  - light.control:
-                      id: main_light
-                      state: !lambda return x;
+            - light.control:
+                id: main_light
+                state: !lambda return x;
 
 
 
