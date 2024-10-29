@@ -7,21 +7,36 @@
 #include <algorithm>
 
 namespace jcc{ //jack custom components namespace
-    /**
-     * Represents a ble device
-     * Note: is and must stay POD
-     */
-    class bleDevice{
-        int8_t rssi{};
-        uint16_t timestamp{};
-    };
+/**
+ * This class represent a discrete counter
+ */
+class counter:public esphome::Component{
+    using ctype=uint8_t;
+    public:
+        counter(ctype max): m_count{},m_overflow{max}{};
+
+        void increase(){ //+1 to the counter
+            m_count++;
+        }
+
+        void clear(){ //reset the counter
+            m_count=0;
+        }
+
+        bool isOverflow(){ //check if it has overflown
+            return m_count>=m_overflow;
+        }
+
+
+    private:
+        ctype m_count;
+        ctype m_overflow;
+};
 /**
  * Class to represent a BLE device scanner. Detects nearby ble devices and allows to perform some operations.
  * Designed to read RSSI.
  */
     class bleScanner: public esphome::Component{
-        using map_device=std::map<std::string,int8_t>;
-        using pair_type=map_device::value_type;
         using RSSI=int8_t;
         static const uint8_t max_devices=128;
 
